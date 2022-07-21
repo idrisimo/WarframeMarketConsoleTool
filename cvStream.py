@@ -1,6 +1,7 @@
+
 import cv2
 from pytesseract import pytesseract
-import pyautogui
+# import pyautogui
 from PIL import ImageGrab
 import numpy as np
 import time
@@ -9,7 +10,7 @@ import win32ui
 import win32con
 from pytesseract import pytesseract
 from pytesseract import Output
-from warframeMarketTool.handlers import format_pytesseract_as_data, get_brackets, get_market_price
+from handlers import format_pytesseract_as_data, get_brackets, get_market_price
 import pandas as pd
 
 def list_window_names():
