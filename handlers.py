@@ -27,15 +27,17 @@ def get_brackets(line):
 
 
 def get_market_price(item):
-    item_cleaned = item.lower().replace(' ', '_')
-    if item_cleaned.endswith('prime'):
-        item_cleaned = item_cleaned + '_set' 
-    headers = {'Platform': 'xbox', 'accept': 'application/json'}
-    url = f"https://api.warframe.market/v1/items/{item_cleaned}/orders"
-    r = requests.get(url, headers=headers)
-    orders = r.json()['payload']['orders']
-    platinum_for_orders = [order['platinum'] for order in orders]
-    average_plat_price = round(sum(platinum_for_orders) / len(platinum_for_orders))
-    return average_plat_price
-
+    try:
+        item_cleaned = item.lower().replace(' ', '_')
+        if item_cleaned.endswith('prime'):
+            item_cleaned = item_cleaned + '_set' 
+        headers = {'Platform': 'xbox', 'accept': 'application/json'}
+        url = f"https://api.warframe.market/v1/items/{item_cleaned}/orders"
+        r = requests.get(url, headers=headers)
+        orders = r.json()['payload']['orders']
+        platinum_for_orders = [order['platinum'] for order in orders]
+        average_plat_price = round(sum(platinum_for_orders) / len(platinum_for_orders))
+        return average_plat_price
+    except Exception as e:
+        print("Error: ",e)
 

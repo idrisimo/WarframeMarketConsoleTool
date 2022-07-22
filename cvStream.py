@@ -16,7 +16,7 @@ import pandas as pd
 def list_window_names():
     def winEnumHandler(hwnd, ctx):
         if win32gui.IsWindowVisible(hwnd):
-            print(hex(hwnd), win32gui.GetWindowText(hwnd), hwnd)
+            print("Window stuff: ",hex(hwnd), win32gui.GetWindowText(hwnd), hwnd)
     win32gui.EnumWindows(winEnumHandler, None)
 def window_capture():
 
@@ -74,9 +74,9 @@ while True:
 
     screenshot = ImageGrab.grab(bbox=(90, 690, 780, 980))  # Location on screen of screenshot
     screenshot = np.array(screenshot)
-    screenshot = cv2.cvtColor(screenshot,cv2.COLOR_RGB2BGR) # Normal colour
-    # screenshot = cv2.cvtColor(screenshot,cv2.COLOR_RGB2GRAY)
-
+    # screenshot = cv2.cvtColor(screenshot,cv2.COLOR_RGB2BGR) # Normal colour
+    screenshot = cv2.cvtColor(screenshot,cv2.COLOR_RGB2GRAY)
+    screenshot = cv2.threshold(screenshot, 80,255, cv2.THRESH_BINARY)[1]
     # Returns text as sentences in a list
     # words_in_image = pytesseract.image_to_string(screenshot)
     # print(words_in_image)
@@ -98,16 +98,17 @@ while True:
         for item in brackets:
             if 'Prime' in item:
                 # Adding a dataframe stops too many calls from happening (hopefully)
-                print(item not in df.values)
-                if item not in df.values:
+                if item not in df["text"].values: 
                     average_plat = str(get_market_price(item))
                     print('----------------appending to df-------------------')
                     df = df.append({'text': item, 'average_plat': average_plat}, ignore_index=True)
+                    
                 else:
                     print('----------------getting data from df-------------------')
                     average_plat = df.loc[df['text'] == item, 'average_plat'].item()
-                    print(average_plat)   
+                    print(f'Item: {item} Average Plat: {average_plat}')   
                 plat_list.append(average_plat)
+                # print(plat_list)
         # print(df)
         cv2.putText(screenshot, ' '.join(plat_list), (x + 500, y -30),cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
@@ -123,7 +124,7 @@ while True:
     img = cv2.imshow("computer vision", screenshot)
     print(f'FPS: {1 / (time.time() - loop_time)}')
     loop_time = time.time()
-    #time.sleep(0.5)  # delay loop
+    time.sleep(0.05)  # delay loop
     if cv2.waitKey(1) == ord('q'):
         cv2.destroyAllWindows()
         break
